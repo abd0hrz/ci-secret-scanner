@@ -26,6 +26,7 @@
     BRANCH_NAME: "${CI_COMMIT_BRANCH}"
     REPO_NAME: "${CI_PROJECT_PATH}"
 
+
 .find-secrets:scan:
   stage: scan
   extends:
