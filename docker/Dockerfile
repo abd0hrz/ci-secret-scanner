@@ -19,3 +19,4 @@ RUN apk add --no-cache git bash jq \
     && pip install --no-cache-dir atlassian-python-api pytz requests slack-sdk
 
 CMD ["sh"]
+
