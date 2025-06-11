@@ -225,7 +225,7 @@ The variables referred using `$` are supposed to be created on the repository un
 
 The Docker image used is built using the Dockerfile that is present in this repository here: [Dockerfile](https://github.com/abd0hrz/ci-secret-scanner/tree/master/docker/Dockerfile)
 
-Following build command is used on the root level in the GitHub repository: `docker buildx build --platform linux/amd64 -t "abdullahkhawer/find-and-report-secrets-in-code:latest" --no-cache -f ./docker/Dockerfile .`
+Following build command is used on the root level in the GitHub repository: `docker buildx build --platform linux/amd64 -t "abd0hrz/ci-secret-scanner:latest" --no-cache -f ./docker/Dockerfile .`
 
 For more details, check out its [README](https://github.com/abd0hrz/ci-secret-scanner/blob/master/docker/README.md).
 
