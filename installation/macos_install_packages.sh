@@ -19,3 +19,4 @@ export PATH=$PATH:/usr/local/gitleaks
 echo -n "Gitleaks v" && gitleaks version
 
 echo "Installation completed successfully."
+
