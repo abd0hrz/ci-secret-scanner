@@ -2,7 +2,7 @@
 
 A security solution that finds secrets in a git repository using Gitleaks, generates a JSON report based on the findings from Gitleaks by extracting only the relevant information, finds the commit id and commit author for each finding, updates an Atlassian Confluence page with the secrets found based on that generated report and finally sends an alert on Slack.
 
-❓ Where I can run this?
+## ❓ Where Can I Run This?
 
 This solution can be executed on any macOS or Linux system either locally or on a remote server. It can also be executed on a CI/CD tool like on GitHub Actions, GitLab CI, etc, in a pipeline.
 
@@ -50,7 +50,7 @@ In case of 1 or more secrets found:
 
 ## Manually on a Local or Remote Server
 
-### Prerequisites
+### 🔧 Prerequisites
 
 Following are the prerequisites to be met once before you begin:
 
