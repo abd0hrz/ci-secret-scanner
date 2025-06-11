@@ -1,6 +1,20 @@
-#  🔐 Find and Report Secrets in Code
+# Quick Reference
 
-A security solution that finds secrets in a git repository using Gitleaks, generates a JSON report based on the findings from Gitleaks by extracting only the relevant information, finds the commit id and commit author for each finding, updates an Atlassian Confluence page with the secrets found based on that generated report and finally sends an alert on Slack.
+-	**Maintained at**:
+	[find-and-report-secrets-in-code - GitHub](https://github.com/abd0hrz/ci-secret-scanner)
+
+-	**Where to file issues**:
+	[https://github.com/abd0hrz/ci-secret-scanner/issues](https://github.com/abd0hrz/ci-secret-scanner/issues)
+
+# Supported tags and respective `Dockerfile` links
+
+-	[`1.4.0`, `latest`](https://github.com/abd0hrz/ci-secret-scanner/blob/v1.4.0/docker/Dockerfile)
+
+# Find and Report Secrets in Code
+
+# Introduction
+
+This repository has a Docker image that finds secrets in a git repository using Gitleaks, generates a JSON report based on the findings from Gitleaks by extracting only the relevant information, finds the commit id and commit author for each finding, updates an Atlassian Confluence page with the secrets found based on that generated report and finally sends an alert on Slack.
 
 ❓ Where I can run this?
 
@@ -50,49 +64,9 @@ In case of 1 or more secrets found:
 
 ## Manually on a Local or Remote Server
 
-### Prerequisites
-
-Following are the prerequisites to be met once before you begin:
-
-- Following packages should be installed on your system:
-   - In case of Linux, install the following packages by running either `./installation/linux_install_packages.sh` script or by installing them manually:
-      - `git`
-      - `jq`
-      - `bash`
-      - `make`
-      - `wget`
-      - `python3`
-      - `py3-pip`
-      - `golang`
-      - `gitleaks`
-      - `atlassian-python-api`
-         - Using `pip`
-      - `pytz`
-         - Using `pip`
-      - `requests`
-         - Using `pip`
-      - `slack-sdk`
-         - Using `pip`
-   - In case of macOS, install the following packages by running either `./installation/macos_install_packages.sh` script or by installing them manually:
-      - `git`
-      - `jq`
-      - `bash`
-      - `python`
-      - `python@3`
-      - `gitleaks`
-      - `atlassian-python-api`
-         - Using `pip`
-      - `pytz`
-         - Using `pip`
-      - `requests`
-         - Using `pip`
-      - `slack-sdk`
-         - Using `pip`
-- A Slack Webhook URL is created for the channel where you want to receive the alerts either using general incoming webhook or app incoming webhook.
-
 ### Execution Instructions
 
-Once all the prerequisites are met, set the following environment variables:
+Set the following environment variables:
    - `LOCAL_PATH_TO_GIT_REPO`
       - Description: Local path to the Git repository.
       - Example: `/Desktop/my-projects/my-repo`
@@ -144,10 +118,12 @@ Once all the prerequisites are met, set the following environment variables:
       - Example: `xoxb-__REDACTED__-__REDACTED__-__REDACTED__`
       - Requirement: REQUIRED (if `SLACK_ENABLED` is set to `1`)
 
-And then simply run the following 2 commands:
-- `bash gitleaks.sh`
-- `python3 main.py TIME_ZONE REPOSITORY_NAME BRANCH_NAME [JSON_REPORT_URL]`
-   - Example: `python3 main.py Europe/Amsterdam my-projects/my-repo master`
+And then simply run the following 4 commands:
+- `docker run --platform linux/amd64 -it -e LOCAL_PATH_TO_GIT_REPO=$LOCAL_PATH_TO_GIT_REPO -e REMOTE_PATH_TO_GIT_REPO=$REMOTE_PATH_TO_GIT_REPO -e BRANCH_NAME=$BRANCH_NAME -e CONFLUENCE_ENABLED=$CONFLUENCE_ENABLED -e CONFLUENCE_SITE=$CONFLUENCE_SITE -e CONFLUENCE_USER_EMAIL_ID=$CONFLUENCE_USER_EMAIL_ID -e CONFLUENCE_USER_TOKEN=$CONFLUENCE_USER_TOKEN -e CONFLUENCE_PAGE_TITLE=$CONFLUENCE_PAGE_TITLE -e CONFLUENCE_PAGE_SPACE=$CONFLUENCE_PAGE_SPACE -e SLACK_ENABLED=$SLACK_ENABLED -e SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL -e SLACK_API_TOKEN=$SLACK_API_TOKEN -v $LOCAL_PATH_TO_GIT_REPO:$LOCAL_PATH_TO_GIT_REPO abd0hrz/ci-secret-scanner:latest`
+- `export PATH=$PATH:/usr/local/gitleaks`
+- `bash /find-and-report-secrets-in-code/gitleaks.sh`
+- `python3 /find-and-report-secrets-in-code/main.py TIME_ZONE REPOSITORY_NAME BRANCH_NAME [JSON_REPORT_URL]`
+   - Example: `python3 /find-and-report-secrets-in-code/main.py Europe/Amsterdam my-projects/my-repo master`
    - Note: Details about supported time zones and their constant names can be found here: [pypi.org > project > pytz > Helpers](https://pypi.org/project/pytz/#:~:text=through%20multiple%20timezones.-,Helpers,-There%20are%20two)
 
 ## Automatically via a CI/CD Pipeline
@@ -166,7 +142,7 @@ on:
 
 jobs:
   find-and-report-secrets-in-code:
-    uses: abdullahkhawer/find-and-report-secrets-in-code/.github/workflows/.github-workflow.yml@master
+    uses: abd0hrz/ci-secret-scanner/.github/workflows/.github-workflow.yml@master
     with:
       CONFLUENCE_ENABLED: "1"
       CONFLUENCE_PAGE_TITLE: ${{ vars.CONFLUENCE_PAGE_TITLE }}
@@ -190,7 +166,7 @@ In order to run it on any GitLab repository, add the following in the `.gitlab-c
 
 ```
 include:
-  - remote: 'https://raw.githubusercontent.com/abdullahkhawer/find-and-report-secrets-in-code/master/.gitlab/.gitlab-ci.yml'
+  - remote: 'https://raw.githubusercontent.com/abd0hrz/ci-secret-scanner/master/.gitlab/.gitlab-ci.yml'
 
 stages:
   - scan
@@ -225,12 +201,11 @@ The variables referred using `$` are supposed to be created on the repository un
 
 The Docker image used is built using the Dockerfile that is present in this repository here: [Dockerfile](https://github.com/abd0hrz/ci-secret-scanner/tree/master/docker/Dockerfile)
 
-Following build command is used on the root level in the GitHub repository: `docker buildx build --platform linux/amd64 -t "abdullahkhawer/find-and-report-secrets-in-code:latest" --no-cache -f ./docker/Dockerfile .`
-
-For more details, check out its [README](https://github.com/abd0hrz/ci-secret-scanner/blob/master/docker/README.md).
+Following build command is used on the root level in the GitHub repository: `docker buildx build --platform linux/amd64 -t "abd0hrz/ci-secret-scanner:latest" --no-cache -f ./docker/Dockerfile .`
 
 ## Notes
 
-- A sample Gitleaks configuration file can be found here if interested in using it: `.gitleaks.toml`
+- A sample Gitleaks configuration file can be found here if interested in using it: `https://github.com/abd0hrz/ci-secret-scanner/blob/master/.gitleaks.toml`
 - The Atlassian user should have access to the Confluence app, the `View` and `Add` permissions in the space on it and the `Can edit` permission on the page in that space. Also, you need to create an API token as the password won't work.
 
+For more details, check out the following repository on GitHub: https://github.com/abd0hrz/ci-secret-scanner/

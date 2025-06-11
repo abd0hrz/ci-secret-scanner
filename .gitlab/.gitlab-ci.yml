@@ -1,0 +1,84 @@
+# This job finds secrets in a git repository using Gitleaks, generates a JSON report based on the findings from Gitleaks
+# by extracting only the relevant information, finds the commit id and commit author for each finding, updates an Atlassian
+# Confluence page with the secrets found based on that generated report and finally sends an alert on Slack.
+
+.find-secrets:variables:
+  variables:
+    # Whether to enable reporting on Atlassian Confluence or not
+    CONFLUENCE_ENABLED: "0"
+    # Atlassian Confluence host link (e.g., https://mydomain.atlassian.net)
+    CONFLUENCE_SITE: ""
+    # Atlassian Confluence user email ID (e.g., myname@mydomain.com)
+    CONFLUENCE_USER_EMAIL_ID: ""
+    # Atlassian Confluence user token
+    CONFLUENCE_USER_TOKEN: ""
+    # Atlassian Confluence page title (e.g., "Secrets Detected in the Git Repositories")
+    CONFLUENCE_PAGE_TITLE: ""
+    # Atlassian Confluence page space (e.g., docs)
+    CONFLUENCE_PAGE_SPACE: ""
+    # Whether to enable notifications on Slack or not
+    SLACK_ENABLED: "0"
+    # Slack Webhook URL (e.g., https://hooks.slack.com/services/__REDACTED__/__REDACTED__/__REDACTED__)
+    SLACK_WEBHOOK_URL: ""
+    # Slack API Token (e.g., xoxb-__REDACTED__-__REDACTED__-__REDACTED__)
+    SLACK_API_TOKEN: ""
+    REMOTE_PATH_TO_GIT_REPO: "${CI_PROJECT_URL}"
+    BRANCH_NAME: "${CI_COMMIT_BRANCH}"
+    REPO_NAME: "${CI_PROJECT_PATH}"
+
+.find-secrets:scan:
+  stage: scan
+  extends:
+    - .find-secrets:variables
+  image: abd0hrz/ci-secret-scanner:1.4.0
+  before_script:
+    - |
+      if [ -n "$CONFLUENCE_ENABLED" ] && [ "$CONFLUENCE_ENABLED" -eq 1 ]; then
+        if [ -z "$CONFLUENCE_SITE" ]; then
+          echo "CONFLUENCE_SITE is empty or null. Exiting with error."
+          exit 1
+        fi
+
+        if [ -z "$CONFLUENCE_USER_EMAIL_ID" ]; then
+          echo "CONFLUENCE_USER_EMAIL_ID is empty or null. Exiting with error."
+          exit 1
+        fi
+
+        if [ -z "$CONFLUENCE_USER_TOKEN" ]; then
+          echo "CONFLUENCE_USER_TOKEN is empty or null. Exiting with error."
+          exit 1
+        fi
+
+        if [ -z "$CONFLUENCE_PAGE_TITLE" ]; then
+          echo "CONFLUENCE_PAGE_TITLE is empty or null. Exiting with error."
+          exit 1
+        fi
+
+        if [ -z "$CONFLUENCE_PAGE_SPACE" ]; then
+          echo "CONFLUENCE_PAGE_SPACE is empty or null. Exiting with error."
+          exit 1
+        fi
+      fi
+
+      if [ -n "$SLACK_ENABLED" ] && [ "$SLACK_ENABLED" -eq 1 ]; then
+        if [ -z "$SLACK_WEBHOOK_URL" ]; then
+          echo "SLACK_WEBHOOK_URL is empty or null. Exiting with error."
+          exit 1
+        fi
+
+        if [ -z "$SLACK_API_TOKEN" ]; then
+          echo "SLACK_API_TOKEN is empty or null. Exiting with error."
+          exit 1
+        fi
+      fi
+    - git fetch origin $CI_COMMIT_BRANCH
+  script:
+    - export LOCAL_PATH_TO_GIT_REPO=$(pwd)
+    - export PATH=$PATH:/usr/local/gitleaks
+    - cd /find-and-report-secrets-in-code/
+    - bash ./gitleaks.sh
+    - python3 main.py "Europe/Amsterdam" $REPO_NAME $BRANCH_NAME $CI_JOB_URL/artifacts/raw/gitleaks-report.json
+    - cp ./gitleaks-report.json $LOCAL_PATH_TO_GIT_REPO/gitleaks-report.json
+  artifacts:
+    paths:
+      - gitleaks-report.json
