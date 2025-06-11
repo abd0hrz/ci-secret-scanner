@@ -235,3 +235,5 @@ For more details, check out its [README](https://github.com/abd0hrz/ci-secret-sc
 - A sample Gitleaks configuration file can be found here if interested in using it: `.gitleaks.toml`
 - The Atlassian user should have access to the Confluence app, the `View` and `Add` permissions in the space on it and the `Can edit` permission on the page in that space. Also, you need to create an API token as the password won't work.
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
