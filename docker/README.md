@@ -209,3 +209,4 @@ Following build command is used on the root level in the GitHub repository: `doc
 - The Atlassian user should have access to the Confluence app, the `View` and `Add` permissions in the space on it and the `Can edit` permission on the page in that space. Also, you need to create an API token as the password won't work.
 
 For more details, check out the following repository on GitHub: https://github.com/abd0hrz/ci-secret-scanner/
+
