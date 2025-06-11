@@ -1,6 +1,5 @@
 #  🔐 Git Secret Scanner
 
-
 A security solution that finds secrets in a git repository using Gitleaks, generates a JSON report based on the findings from Gitleaks by extracting only the relevant information, finds the commit id and commit author for each finding, updates an Atlassian Confluence page with the secrets found based on that generated report and finally sends an alert on Slack.
 
 ❓ Where I can run this?
