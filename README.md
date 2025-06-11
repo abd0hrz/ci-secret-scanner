@@ -190,7 +190,7 @@ In order to run it on any GitLab repository, add the following in the `.gitlab-c
 
 ```
 include:
-  - remote: 'https://raw.githubusercontent.com/abdullahkhawer/find-and-report-secrets-in-code/master/.gitlab/.gitlab-ci.yml'
+  - remote: 'https://raw.githubusercontent.com/abd0hrz/ci-secret-scanner/master/.gitlab/.gitlab-ci.yml'
 
 stages:
   - scan
